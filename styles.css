@@ -1,43 +1,49 @@
-/* General Styles */
+/* Global Styles */
 body {
-    background-color: #e6f7ff; /* Light blue background */
+    background-color: #f9f5f2; /* Light beige for a clean cooking theme */
     font-family: 'Arial', sans-serif;
-    color: #333; /* Neutral text color for readability */
+    color: #333; /* Neutral text color */
     margin: 0;
     padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    text-align: center;
 }
 
+/* Wrapper for Center Content */
 #wrapper {
     width: 90%;
     max-width: 800px;
-    background: white;
-    border-radius: 15px;
-    padding: 30px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    margin: 20px auto;
+    padding: 20px;
+    background: #fff; /* White for content area */
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
 }
 
 /* Header Styles */
-h1 {
-    font-size: 2rem; /* Larger font size for the title */
-    color: #005580; /* Darker blue for contrast */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 10px;
     margin-bottom: 20px;
+    border-bottom: 2px solid #ddd; /* Divider for clarity */
 }
 
-h2 {
-    font-size: 1.5rem;
-    color: #007acc; /* Slightly lighter blue */
-    margin-bottom: 15px;
+header h1 {
+    font-size: 2.5rem; /* Larger title font */
+    color: #e91e63; /* Vibrant pink for "Cooking Chaos" branding */
 }
 
-h3 {
-    font-size: 1.2rem;
-    color: #007acc;
-    margin-top: 20px;
+.home-button {
+    background: #007acc; /* Blue for buttons */
+    color: white;
+    text-decoration: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+.home-button:hover {
+    background: #005580; /* Darker blue on hover */
 }
 
 /* Form Styles */
@@ -45,7 +51,7 @@ form {
     margin: 20px 0;
     padding: 20px;
     background: #f2f9ff; /* Light blue form background */
-    border: 1px solid #cce7ff; /* Subtle blue border */
+    border: 1px solid #cce7ff;
     border-radius: 10px;
 }
 
@@ -53,7 +59,7 @@ form label {
     display: block;
     margin: 10px 0 5px;
     font-weight: bold;
-    font-size: 1.1rem; /* Slightly larger labels */
+    font-size: 1.1rem;
     color: #005580;
 }
 
@@ -71,7 +77,7 @@ form input, form select, form button {
 }
 
 form button {
-    background: #007acc; /* Blue button */
+    background: #007acc;
     color: white;
     font-size: 1rem;
     font-weight: bold;
@@ -81,58 +87,87 @@ form button {
 }
 
 form button:hover {
-    background: #005580; /* Darker blue on hover */
-}
-
-/* Recipe and Content Styles */
-#content {
-    margin-top: 30px;
-    text-align: left;
-}
-
-#recipes div {
-    margin-bottom: 15px;
-    padding: 15px;
-    border: 1px solid #cce7ff;
-    border-radius: 8px;
-    background: #f9fcff; /* Slight blue for recipe cards */
-    font-size: 1rem;
-    text-align: left;
-}
-
-#recipes div:hover {
-    background: #e6f7ff; /* Highlight on hover */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Lift effect */
-}
-
-#recipes p {
-    margin: 0;
-    padding: 0;
-    color: #333; /* Neutral text color */
-}
-
-#recipes button {
-    margin-top: 10px;
-    padding: 10px 20px;
-    font-size: 1rem;
-    background: #007acc;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-#recipes button:hover {
     background: #005580;
 }
 
+/* Recipe Card Styles */
+.recipe-card {
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    background: #f9fcff; /* Light blue for recipe cards */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Soft shadow */
+}
+
+.recipe-card button {
+    margin: 5px;
+    background: #e91e63; /* Vibrant pink for buttons */
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.recipe-card button:hover {
+    background: #d81b60; /* Darker pink on hover */
+}
+
+/* Instructions Section */
 #instructions {
     margin-top: 20px;
-    font-size: 1.1rem;
-    line-height: 1.5;
-    color: #333;
-    background: #f2f9ff;
     padding: 20px;
+    background: #fff;
     border-radius: 10px;
+    border: 1px solid #ddd;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: #333;
+}
+
+/* Bookmark List */
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+ul li {
+    background: #f9fcff;
+    border: 1px solid #cce7ff;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    font-size: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+ul li form {
+    margin: 0;
+}
+
+ul li button {
+    background: #ff4444; /* Red button for Remove */
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+ul li button:hover {
+    background: #cc0000; /* Darker red on hover */
+}
+
+/* Footer */
+footer {
+    margin-top: 20px;
+    text-align: center;
+    color: #888;
+    font-size: 0.9rem;
 }
