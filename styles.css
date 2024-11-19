@@ -1,52 +1,138 @@
+/* General Styles */
 body {
-    background-color: #efecdb;
-    font-family: Arial, sans-serif;
-    color: #532f15;
-    text-align: center;
+    background-color: #e6f7ff; /* Light blue background */
+    font-family: 'Arial', sans-serif;
+    color: #333; /* Neutral text color for readability */
     margin: 0;
     padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    text-align: center;
 }
+
 #wrapper {
-    width: 80%;
-    margin: 0 auto;
-    padding: 20px;
+    width: 90%;
+    max-width: 800px;
     background: white;
-    border-radius: 10px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
 }
-h1, h2 {
-    color: #037b8d;
+
+/* Header Styles */
+h1 {
+    font-size: 2rem; /* Larger font size for the title */
+    color: #005580; /* Darker blue for contrast */
+    margin-bottom: 20px;
 }
+
+h2 {
+    font-size: 1.5rem;
+    color: #007acc; /* Slightly lighter blue */
+    margin-bottom: 15px;
+}
+
+h3 {
+    font-size: 1.2rem;
+    color: #007acc;
+    margin-top: 20px;
+}
+
+/* Form Styles */
 form {
     margin: 20px 0;
+    padding: 20px;
+    background: #f2f9ff; /* Light blue form background */
+    border: 1px solid #cce7ff; /* Subtle blue border */
+    border-radius: 10px;
 }
+
 form label {
     display: block;
-    margin: 5px 0;
+    margin: 10px 0 5px;
+    font-weight: bold;
+    font-size: 1.1rem; /* Slightly larger labels */
+    color: #005580;
 }
+
 form input, form select, form button {
-    width: 100%;
-    max-width: 300px;
-    padding: 10px;
+    width: 90%;
+    max-width: 400px;
+    padding: 12px;
     margin: 10px auto;
     display: block;
-    border-radius: 5px;
-    border: 1px solid #ccc;
+    border-radius: 8px;
+    border: 1px solid #ccd9ff;
+    font-size: 1rem;
+    background: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
+
 form button {
-    background: #037b8d;
+    background: #007acc; /* Blue button */
     color: white;
+    font-size: 1rem;
+    font-weight: bold;
     border: none;
     cursor: pointer;
+    transition: background-color 0.3s ease;
 }
+
 form button:hover {
-    background: #960;
+    background: #005580; /* Darker blue on hover */
 }
-.recipeImg {
-    margin: 10px auto;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+
+/* Recipe and Content Styles */
+#content {
+    margin-top: 30px;
     text-align: left;
-    width: 300px;
+}
+
+#recipes div {
+    margin-bottom: 15px;
+    padding: 15px;
+    border: 1px solid #cce7ff;
+    border-radius: 8px;
+    background: #f9fcff; /* Slight blue for recipe cards */
+    font-size: 1rem;
+    text-align: left;
+}
+
+#recipes div:hover {
+    background: #e6f7ff; /* Highlight on hover */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Lift effect */
+}
+
+#recipes p {
+    margin: 0;
+    padding: 0;
+    color: #333; /* Neutral text color */
+}
+
+#recipes button {
+    margin-top: 10px;
+    padding: 10px 20px;
+    font-size: 1rem;
+    background: #007acc;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#recipes button:hover {
+    background: #005580;
+}
+
+#instructions {
+    margin-top: 20px;
+    font-size: 1.1rem;
+    line-height: 1.5;
+    color: #333;
+    background: #f2f9ff;
+    padding: 20px;
+    border-radius: 10px;
 }
