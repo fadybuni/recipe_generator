@@ -1,6 +1,17 @@
 <?php
-	$con = mysqli_connect("localhost","root","root") or die(mysqli_error($con));
-    mysqli_query($con,"SET NAMES 'utf8'"); 
-    mysqli_query($con,'SET CHARACTER SET utf8'); 
-	$db = mysqli_select_db($con, "my_recipes") or die(mysqli_error($con));
- ?>
+$servername = "localhost"; // Replace with your server name if different
+$username = "root";        // Replace with your database username
+$password = "root";        // Replace with your database password
+$dbname = "my_recipes";    // Ensure this matches your database name
+
+$conn = mysqli_connect($servername, $username, $password, $dbname);
+
+if (!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
+}
+
+// Input sanitization function
+function sanitizeInput($input, $connection) {
+    return mysqli_real_escape_string($connection, htmlspecialchars(trim($input)));
+}
+?>
