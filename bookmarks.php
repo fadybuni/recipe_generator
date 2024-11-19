@@ -19,14 +19,6 @@ $result = $stmt->get_result();
 $user = $result->fetch_assoc();
 $user_id = $user['id'];
 
-// Handle deleting a bookmark
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_bookmark'])) {
-    $bookmark_id = $_POST['bookmark_id'];
-    $stmt = $conn->prepare("DELETE FROM bookmarks WHERE id = ? AND user_id = ?");
-    $stmt->bind_param("ii", $bookmark_id, $user_id);
-    $stmt->execute();
-}
-
 // Fetch all bookmarked recipes for the user
 $query = "SELECT id, recipe FROM bookmarks WHERE user_id = ?";
 $stmt = $conn->prepare($query);
@@ -47,12 +39,14 @@ $bookmarks = $result->fetch_all(MYSQLI_ASSOC);
         <h1>Cooking Chaos</h1>
         <a href="home.php" class="home-button">Home</a>
     </header>
-    <h2>Bookmarked Recipes</h2>
+    <h2>Your Bookmarked Recipes</h2>
     <?php if (!empty($bookmarks)): ?>
         <ul>
             <?php foreach ($bookmarks as $bookmark): ?>
                 <li>
-                    <?php echo htmlspecialchars($bookmark['recipe']); ?>
+                    <a href="recipeDetails.php?recipe=<?php echo urlencode($bookmark['recipe']); ?>">
+                        <?php echo htmlspecialchars($bookmark['recipe']); ?>
+                    </a>
                     <form method="POST" action="" style="display: inline;">
                         <input type="hidden" name="bookmark_id" value="<?php echo $bookmark['id']; ?>">
                         <button type="submit" name="delete_bookmark">Remove</button>

@@ -1,173 +1,80 @@
-/* Global Styles */
+/* General Styles */
 body {
-    background-color: #f9f5f2; /* Light beige for a clean cooking theme */
-    font-family: 'Arial', sans-serif;
-    color: #333; /* Neutral text color */
+    background-color: #f9f5f2;
+    font-family: Arial, sans-serif;
+    color: #333;
     margin: 0;
     padding: 0;
 }
 
-/* Wrapper for Center Content */
+/* Wrapper */
 #wrapper {
     width: 90%;
     max-width: 800px;
     margin: 20px auto;
     padding: 20px;
-    background: #fff; /* White for content area */
+    background: #fff;
     border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
-/* Header Styles */
-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-bottom: 10px;
-    margin-bottom: 20px;
-    border-bottom: 2px solid #ddd; /* Divider for clarity */
-}
-
+/* Header */
 header h1 {
-    font-size: 2.5rem; /* Larger title font */
-    color: #e91e63; /* Vibrant pink for "Cooking Chaos" branding */
+    font-size: 2.5rem;
+    color: #e91e63;
+    text-align: center;
 }
 
-.home-button {
-    background: #007acc; /* Blue for buttons */
-    color: white;
-    text-decoration: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    font-size: 1rem;
-}
-
-.home-button:hover {
-    background: #005580; /* Darker blue on hover */
-}
-
-/* Form Styles */
-form {
+/* Home Options */
+#home-options {
+    display: flex;
+    justify-content: space-around;
     margin: 20px 0;
-    padding: 20px;
-    background: #f2f9ff; /* Light blue form background */
-    border: 1px solid #cce7ff;
-    border-radius: 10px;
 }
 
-form label {
-    display: block;
-    margin: 10px 0 5px;
-    font-weight: bold;
-    font-size: 1.1rem;
-    color: #005580;
-}
-
-form input, form select, form button {
-    width: 90%;
-    max-width: 400px;
-    padding: 12px;
-    margin: 10px auto;
-    display: block;
-    border-radius: 8px;
-    border: 1px solid #ccd9ff;
-    font-size: 1rem;
-    background: white;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-form button {
+#home-options .home-button {
     background: #007acc;
     color: white;
-    font-size: 1rem;
+    text-decoration: none;
+    padding: 15px 25px;
+    border-radius: 10px;
+    font-size: 1.2rem;
     font-weight: bold;
-    border: none;
-    cursor: pointer;
     transition: background-color 0.3s ease;
 }
 
-form button:hover {
+#home-options .home-button:hover {
     background: #005580;
 }
 
-/* Recipe Card Styles */
-.recipe-card {
-    padding: 15px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    margin-bottom: 10px;
-    background: #f9fcff; /* Light blue for recipe cards */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Soft shadow */
-}
-
-.recipe-card button {
-    margin: 5px;
-    background: #e91e63; /* Vibrant pink for buttons */
-    color: white;
-    border: none;
-    padding: 10px;
-    border-radius: 5px;
-    font-size: 1rem;
-    cursor: pointer;
-}
-
-.recipe-card button:hover {
-    background: #d81b60; /* Darker pink on hover */
-}
-
-/* Instructions Section */
-#instructions {
-    margin-top: 20px;
-    padding: 20px;
-    background: #fff;
-    border-radius: 10px;
-    border: 1px solid #ddd;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    font-size: 1.1rem;
-    line-height: 1.6;
-    color: #333;
-}
-
-/* Bookmark List */
-ul {
-    list-style: none;
-    padding: 0;
-}
-
-ul li {
-    background: #f9fcff;
-    border: 1px solid #cce7ff;
-    padding: 15px;
-    margin-bottom: 10px;
-    border-radius: 8px;
-    font-size: 1rem;
+/* Meal Options */
+#meal-options {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    justify-content: space-around;
+    margin: 30px 0;
 }
 
-ul li form {
-    margin: 0;
-}
-
-ul li button {
-    background: #ff4444; /* Red button for Remove */
-    color: white;
-    border: none;
-    padding: 10px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 0.9rem;
-}
-
-ul li button:hover {
-    background: #cc0000; /* Darker red on hover */
-}
-
-/* Footer */
-footer {
-    margin-top: 20px;
+#meal-options a {
+    text-decoration: none;
+    color: #333;
     text-align: center;
-    color: #888;
-    font-size: 0.9rem;
+}
+
+.meal-image {
+    width: 200px;
+    height: 200px;
+    border-radius: 15px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease;
+}
+
+.meal-image:hover {
+    transform: scale(1.1);
+}
+
+.meal-image + p {
+    margin-top: 10px;
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #007acc;
 }
