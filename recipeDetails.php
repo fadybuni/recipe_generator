@@ -1,7 +1,6 @@
 <?php
-include('db.php'); // Database connection
-include('openai.php'); // Include OpenAI logic
-
+include('db.php');
+include('openai.php'); // Include OpenAI API logic
 session_start();
 
 if (!isset($_SESSION['username'])) {
@@ -9,120 +8,69 @@ if (!isset($_SESSION['username'])) {
     exit();
 }
 
-$username = $_SESSION['username'];
-$recipes = [];
+// Check for meal selection or recipe details
+$meal = isset($_GET['meal']) ? $_GET['meal'] : "";
+$recipe = isset($_GET['recipe']) ? $_GET['recipe'] : "";
 $instructions = "";
-$selectedMeal = isset($_GET['meal']) ? $_GET['meal'] : "";
 
-// Get the logged-in user's ID
-$query = "SELECT id FROM app_users WHERE username = ?";
-$stmt = $conn->prepare($query);
-$stmt->bind_param("s", $username);
-$stmt->execute();
-$result = $stmt->get_result();
-$user = $result->fetch_assoc();
-$user_id = $user['id'];
-
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if (isset($_POST['generate'])) {
-        $ingredients = sanitizeInput($_POST['ingredients'], $conn);
-        $diet = sanitizeInput($_POST['diet'], $conn);
-        $skill = sanitizeInput($_POST['skill'], $conn);
-
-        $recipes = generateRecipes("$selectedMeal, $diet, $ingredients", $diet, $skill);
-    } elseif (isset($_POST['select_recipe'])) {
-        $selectedRecipe = $_POST['recipe'];
-        $instructions = getRecipeInstructions($selectedRecipe); // Simulates fetching instructions
-    } elseif (isset($_POST['bookmark_recipe'])) {
-        $recipeToBookmark = $_POST['recipe'];
-        $stmt = $conn->prepare("INSERT INTO bookmarks (user_id, recipe) VALUES (?, ?)");
-        $stmt->bind_param("is", $user_id, $recipeToBookmark);
-        $stmt->execute();
+if (!empty($recipe)) {
+    try {
+        // Fetch detailed instructions for the selected recipe
+        $instructions = generateRecipeInstructions($recipe);
+    } catch (Exception $e) {
+        $instructions = "Failed to fetch instructions. Please try again.";
     }
 }
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Cooking Chaos - Recipes</title>
+    <title>Cooking Chaos - Recipe Details</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 <div id="wrapper">
     <header>
-        <h1>Cooking Chaos</h1>
+        <h1 class="logo">Cooking Chaos</h1>
         <a href="home.php" class="home-button">Home</a>
     </header>
-    <h2>Welcome, <?php echo htmlspecialchars($username); ?>!</h2>
-
-    <h2>Select a Meal Type</h2>
-    <div id="meal-options">
-        <a href="?meal=breakfast">
-            <img src="images/breakfast.jpg" alt="Breakfast" class="meal-image">
-            <p>Breakfast</p>
-        </a>
-        <a href="?meal=lunch">
-            <img src="images/lunch.jpg" alt="Lunch" class="meal-image">
-            <p>Lunch</p>
-        </a>
-        <a href="?meal=dinner">
-            <img src="images/dinner.jpg" alt="Dinner" class="meal-image">
-            <p>Dinner</p>
-        </a>
-        <a href="?meal=dessert">
-            <img src="images/dessert.jpg" alt="Dessert" class="meal-image">
-            <p>Dessert</p>
-        </a>
-    </div>
-
-    <?php if (!empty($selectedMeal)): ?>
-        <h2>Selected Meal: <?php echo ucfirst($selectedMeal); ?></h2>
-        <form method="POST" action="">
-            <label>Select Diet:</label>
-            <select name="diet">
+    <?php if (!empty($recipe)): ?>
+        <h2><?php echo htmlspecialchars($recipe); ?></h2>
+        <p><?php echo nl2br(htmlspecialchars($instructions)); ?></p>
+        <form method="POST" action="bookmarks.php">
+            <input type="hidden" name="recipe" value="<?php echo htmlspecialchars($recipe); ?>">
+            <button type="submit" name="bookmark_recipe">Bookmark Recipe</button>
+        </form>
+    <?php elseif (!empty($meal)): ?>
+        <h2>Selected Meal: <?php echo htmlspecialchars(ucfirst($meal)); ?></h2>
+        <form method="POST" action="recipeResults.php">
+            <input type="hidden" name="meal" value="<?php echo htmlspecialchars($meal); ?>">
+            <label for="diet">Select Diet:</label>
+            <select name="diet" id="diet">
                 <option value="n/a">N/A</option>
                 <option value="vegan">Vegan</option>
                 <option value="vegetarian">Vegetarian</option>
                 <option value="gluten-free">Gluten-Free</option>
+                <option value="dairy-free">Dairy-Free</option>
+                <option value="keto">Keto</option>
+                <option value="halal">Halal</option>
+                <option value="paleo">Paleo</option>
+                <option value="low-carb">Low-Carb</option>
             </select>
-            <label>Select Skill Level:</label>
-            <select name="skill">
+            <label for="skill">Select Skill Level:</label>
+            <select name="skill" id="skill">
                 <option value="beginner">Beginner</option>
                 <option value="intermediate">Intermediate</option>
                 <option value="expert">Expert</option>
             </select>
-            <label>Available Ingredients (comma-separated):</label>
-            <input type="text" name="ingredients" required>
+            <label for="ingredients">Available Ingredients (comma-separated):</label>
+            <input type="text" name="ingredients" id="ingredients" required>
             <button type="submit" name="generate">Generate Recipes</button>
         </form>
+    <?php else: ?>
+        <p>No meal or recipe selected. Go back to the previous page.</p>
+        <a href="selectMeal.php" class="home-button">Back to Meal Selection</a>
     <?php endif; ?>
-
-    <div id="content">
-        <h2>Recipes</h2>
-        <?php if (!empty($recipes)): ?>
-            <?php foreach ($recipes as $recipe): ?>
-                <div class="recipe-card">
-                    <p><?php echo htmlspecialchars($recipe); ?></p>
-                    <form method="POST" action="">
-                        <input type="hidden" name="recipe" value="<?php echo htmlspecialchars($recipe); ?>">
-                        <button type="submit" name="select_recipe">View Instructions</button>
-                    </form>
-                </div>
-            <?php endforeach; ?>
-        <?php elseif (!empty($instructions)): ?>
-            <h3>Recipe Instructions</h3>
-            <div id="instructions">
-                <p><strong>Recipe:</strong> <?php echo htmlspecialchars($selectedRecipe); ?></p>
-                <p><?php echo nl2br(htmlspecialchars($instructions)); ?></p>
-                <form method="POST" action="">
-                    <input type="hidden" name="recipe" value="<?php echo htmlspecialchars($selectedRecipe); ?>">
-                    <button type="submit" name="bookmark_recipe">Bookmark Recipe</button>
-                </form>
-            </div>
-        <?php else: ?>
-            <p>No recipes generated yet. Select a meal type to start!</p>
-        <?php endif; ?>
-    </div>
 </div>
 </body>
 </html>

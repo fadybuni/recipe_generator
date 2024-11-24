@@ -1,64 +1,54 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
 include('db.php');
+session_start();
 
-if (isset($_POST['register'])) {
-    $username = sanitizeInput($_POST['username'], $conn);
-    $password = md5($_POST['password']); // Replace with password_hash() in production
-
-    $query = "INSERT INTO app_users (username, password) VALUES ('$username', '$password')";
-
-    if (mysqli_query($conn, $query)) {
-        echo "<p style='color:green;'>Registration successful! Please login.</p>";
-    } else {
-        echo "<p style='color:red;'>Error: " . mysqli_error($conn) . "</p>";
-    }
+if (isset($_SESSION['username'])) {
+    header('Location: home.php');
+    exit();
 }
 
-if (isset($_POST['login'])) {
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $username = sanitizeInput($_POST['username'], $conn);
-    $password = md5($_POST['password']); // Replace with password_hash() in production
+    $password = md5($_POST['password']); // Replace with password_hash in production
 
-    $query = "SELECT * FROM app_users WHERE username = '$username' AND password = '$password'";
-    $result = mysqli_query($conn, $query);
+    $query = "SELECT * FROM app_users WHERE username = ? AND password = ?";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("ss", $username, $password);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
-    if (mysqli_num_rows($result) > 0) {
-        session_start();
+    if ($result->num_rows === 1) {
         $_SESSION['username'] = $username;
-        header('Location: recipeDetails.php');
+        header('Location: home.php');
+        exit();
     } else {
-        echo "<p style='color:red;'>Invalid username or password.</p>";
+        $error = "Invalid username or password.";
     }
 }
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Recipe Generator - Login/Register</title>
+    <title>Cooking Chaos - Login</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 <div id="wrapper">
-    <h1>Recipe Generator</h1>
+    <header>
+        <h1 class="logo">Cooking Chaos</h1>
+    </header>
+    <h2>Login</h2>
+    <?php if (isset($error)): ?>
+        <p class="error"><?php echo $error; ?></p>
+    <?php endif; ?>
     <form method="POST" action="">
-        <h2>Login</h2>
         <label>Username:</label>
         <input type="text" name="username" required>
         <label>Password:</label>
         <input type="password" name="password" required>
-        <button type="submit" name="login">Login</button>
+        <button type="submit">Login</button>
     </form>
-    <form method="POST" action="">
-        <h2>Register</h2>
-        <label>Username:</label>
-        <input type="text" name="username" required>
-        <label>Password:</label>
-        <input type="password" name="password" required>
-        <button type="submit" name="register">Register</button>
-    </form>
+    <p>Don't have an account? <a href="register.php">Register here</a>.</p>
 </div>
 </body>
 </html>
