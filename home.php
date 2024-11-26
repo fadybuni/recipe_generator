@@ -1,9 +1,9 @@
 <?php
-include('db.php'); // Database connection
+include('db.php');
 session_start();
 
 if (!isset($_SESSION['username'])) {
-    header('Location: index.php'); // Redirect to login if not authenticated
+    header('Location: index.php');
     exit();
 }
 
@@ -22,8 +22,14 @@ $username = $_SESSION['username'];
     </header>
     <h2>Welcome, <?php echo htmlspecialchars($username); ?>!</h2>
     <div id="home-options">
+        <!-- Generate Recipes Option -->
         <a href="selectMeal.php" class="home-button large-button">Generate Recipes</a>
+        
+        <!-- View Bookmarked Recipes Option -->
         <a href="bookmarks.php" class="home-button large-button">Bookmarked Recipes</a>
+        
+        <!-- New Generate Random Recipe Button -->
+        <a href="randomRecipe.php" class="home-button large-button">Generate Random Recipe</a>
     </div>
 </div>
 </body>

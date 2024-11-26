@@ -1,19 +1,18 @@
 <?php
-$servername = "localhost"; // Your server name
-$username = "root";        // Database username (MAMP default)
-$password = "root";        // Database password (MAMP default)
-$dbname = "my_recipes";    // Your database name
+// Database connection
+$servername = 'localhost'; // Replace with your database server name if different
+$username = 'root';        // Replace with your database username
+$password = 'root';            // Replace with your database password
+$dbname = 'my_recipes';    // Replace with your database name
 
-// Connect to the database
-$conn = mysqli_connect($servername, $username, $password, $dbname);
+$conn = new mysqli($servername, $username, $password, $dbname);
 
-// Check the connection
-if (!$conn) {
-    die("Connection failed: " . mysqli_connect_error());
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
 }
 
-// Function to sanitize input
-function sanitizeInput($input, $connection) {
-    return mysqli_real_escape_string($connection, htmlspecialchars(trim($input)));
+// Sanitize input
+function sanitizeInput($input, $conn) {
+    return mysqli_real_escape_string($conn, trim($input));
 }
-?>
