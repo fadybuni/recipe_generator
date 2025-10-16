@@ -7,7 +7,6 @@ if (!isset($_SESSION['username'])) {
     exit();
 }
 
-// Fetch user_id for the logged-in username
 $username = $_SESSION['username'];
 $stmt = $conn->prepare("SELECT id FROM app_users WHERE username = ?");
 $stmt->bind_param("s", $username);
@@ -21,26 +20,71 @@ if (!$user) {
 
 $user_id = $user['id'];
 
-//  Remove Bookmark
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['remove_bookmark'])) {
-    $bookmarkId = $_POST['bookmark_id'];
-    $stmt = $conn->prepare("DELETE FROM bookmarks WHERE id = ? AND user_id = ?");
-    $stmt->bind_param("ii", $bookmarkId, $user_id);
+=$mealTypes = ['breakfast', 'lunch', 'dinner', 'dessert'];
+$bookmarksByMealType = [];
+
+foreach ($mealTypes as $mealType) {
+    $stmt = $conn->prepare("SELECT id, recipe FROM bookmarks WHERE user_id = ? AND meal_type = ?");
+    $stmt->bind_param("is", $user_id, $mealType);
     $stmt->execute();
+    $result = $stmt->get_result();
+    $bookmarksByMealType[$mealType] = $result->fetch_all(MYSQLI_ASSOC);
 }
 
-// Fetch bookmarks for the logged-in user
-$stmt = $conn->prepare("SELECT id, recipe, recipe_name FROM bookmarks WHERE user_id = ?");
-$stmt->bind_param("i", $user_id);
-$stmt->execute();
-$result = $stmt->get_result();
-$bookmarks = $result->fetch_all(MYSQLI_ASSOC);
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['remove_bookmark'])) {
+    $bookmarkId = intval($_POST['bookmark_id']);
+    $stmt = $conn->prepare("DELETE FROM bookmarks WHERE id = ? AND user_id = ?");
+    $stmt->bind_param("ii", $bookmarkId, $user_id);
+
+    if ($stmt->execute()) {
+        header("Location: bookmarks.php");
+        exit();
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <title>Cooking Chaos - Bookmarked Recipes</title>
     <link rel="stylesheet" href="styles.css">
+    <style>
+        .meal-section {
+            margin-bottom: 20px;
+        }
+        .meal-section h3 {
+            margin-bottom: 10px;
+        }
+        .bookmark-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .bookmark-item a {
+            text-decoration: none;
+            color: #ff4081;
+            font-weight: bold;
+        }
+        .bookmark-item a:hover {
+            text-decoration: underline;
+        }
+        .bookmark-item button {
+            background-color: #e03570;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .bookmark-item button:hover {
+            background-color: #c02c5a;
+        }
+    </style>
 </head>
 <body>
 <div id="wrapper">
@@ -49,23 +93,24 @@ $bookmarks = $result->fetch_all(MYSQLI_ASSOC);
         <a href="home.php" class="home-button">Home</a>
     </header>
     <h2>Your Bookmarked Recipes</h2>
-    <div id="bookmark-list">
+    <?php foreach ($bookmarksByMealType as $mealType => $bookmarks): ?>
         <?php if (!empty($bookmarks)): ?>
-            <?php foreach ($bookmarks as $bookmark): ?>
-                <div class="bookmark-item">
-                    <a href="recipeDetails.php?recipe=<?php echo urlencode($bookmark['recipe']); ?>">
-                        <?php echo htmlspecialchars($bookmark['recipe_name']); ?>
-                    </a>
-                    <form method="POST" action="">
-                        <input type="hidden" name="bookmark_id" value="<?php echo htmlspecialchars($bookmark['id']); ?>">
-                        <button type="submit" name="remove_bookmark">Remove Bookmark</button>
-                    </form>
-                </div>
-            <?php endforeach; ?>
-        <?php else: ?>
-            <p>No bookmarks found. Start bookmarking recipes!</p>
+            <div class="meal-section">
+                <h3><?php echo ucfirst($mealType); ?> Recipes</h3>
+                <?php foreach ($bookmarks as $bookmark): ?>
+                    <div class="bookmark-item">
+                        <a href="recipeDetails.php?recipe=<?php echo urlencode($bookmark['recipe']); ?>&meal_type=<?php echo urlencode($mealType); ?>">
+                            <?php echo htmlspecialchars($bookmark['recipe']); ?>
+                        </a>
+                        <form method="POST" action="">
+                            <input type="hidden" name="bookmark_id" value="<?php echo $bookmark['id']; ?>">
+                            <button type="submit" name="remove_bookmark">Remove</button>
+                        </form>
+                    </div>
+                <?php endforeach; ?>
+            </div>
         <?php endif; ?>
-    </div>
+    <?php endforeach; ?>
 </div>
 </body>
 </html>

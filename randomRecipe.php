@@ -8,11 +8,9 @@ if (!isset($_SESSION['username'])) {
     exit();
 }
 
-// Variables
 $recipe = $instructions = $ingredients = $cookTime = $mealType = "";
 $success = $error = "";
 
-// Fetch the logged-in user's ID
 $username = $_SESSION['username'];
 $query = "SELECT id FROM app_users WHERE username = ?";
 $stmt = $conn->prepare($query);
@@ -36,8 +34,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['generate_recipe'])) {
     }
 } elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bookmark_recipe'])) {
     $recipeToBookmark = sanitizeInput($_POST['recipe'], $conn);
-    $recipeInstructions = sanitizeInput($_POST['instructions'], $conn);
     $recipeIngredients = sanitizeInput($_POST['ingredients'], $conn);
+    $recipeInstructions = sanitizeInput($_POST['instructions'], $conn);
     $mealType = sanitizeInput($_POST['meal_type'], $conn);
 
     if ($user_id) {
@@ -47,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['generate_recipe'])) {
         if ($stmt->execute()) {
             $success = "Recipe bookmarked successfully!";
         } else {
-            $error = "Failed to bookmark recipe. It might already be bookmarked.";
+            $error = "Failed to bookmark the recipe. It might already be bookmarked.";
         }
     } else {
         $error = "User not found. Unable to bookmark recipe.";
@@ -59,88 +57,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['generate_recipe'])) {
 <head>
     <title>Cooking Chaos - Random Recipe Generator</title>
     <link rel="stylesheet" href="styles.css">
-    <style>
-        /* Styling for the time boxes */
-        .time-options {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-        .time-box {
-            width: 120px;
-            height: 50px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border: 2px solid pink;
-            border-radius: 8px;
-            background-color: white;
-            color: pink;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.3s, color 0.3s, filter 0.3s;
-        }
-        .time-box:hover {
-            filter: brightness(85%);
-        }
-        .time-box.active {
-            background-color: pink;
-            color: white;
-            filter: brightness(75%);
-        }
-
-        /* Meal type selection */
-        .meal-options {
-            display: flex;
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-        .meal-option {
-            cursor: pointer;
-            transition: transform 0.3s, filter 0.3s;
-        }
-        .meal-option img {
-            width: 150px;
-            height: 150px;
-            border-radius: 12px;
-            border: 3px solid pink;
-            transition: border-color 0.3s, transform 0.3s, filter 0.3s;
-        }
-        .meal-option img:hover {
-            filter: brightness(85%);
-        }
-        .meal-option img.selected {
-            filter: brightness(75%);
-            border-color: white;
-            transform: scale(1.1);
-        }
-        .hidden-input {
-            display: none;
-        }
-    </style>
-    <script>
-        // JavaScript to toggle active states
-        document.addEventListener('DOMContentLoaded', () => {
-            // Time selection
-            document.querySelectorAll('.time-box').forEach(box => {
-                box.addEventListener('click', () => {
-                    document.querySelectorAll('.time-box').forEach(b => b.classList.remove('active'));
-                    box.classList.add('active');
-                    box.querySelector('input').checked = true;
-                });
-            });
-
-            // Meal type selection
-            document.querySelectorAll('.meal-option img').forEach(img => {
-                img.addEventListener('click', () => {
-                    document.querySelectorAll('.meal-option img').forEach(i => i.classList.remove('selected'));
-                    img.classList.add('selected');
-                    img.previousElementSibling.checked = true;
-                });
-            });
-        });
-    </script>
 </head>
 <body>
 <div id="wrapper">
@@ -150,47 +66,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['generate_recipe'])) {
     </header>
     <h2>Generate a Random Recipe</h2>
     <form method="POST" action="">
-        <!-- Time Selection -->
-        <p>Select Cooking Time:</p>
-        <div class="time-options">
-            <label class="time-box">
-                <input type="radio" name="cook_time" value="15 minutes" class="hidden-input" required> 15 minutes
-            </label>
-            <label class="time-box">
-                <input type="radio" name="cook_time" value="30 minutes" class="hidden-input" required> 30 minutes
-            </label>
-            <label class="time-box">
-                <input type="radio" name="cook_time" value="45 minutes" class="hidden-input" required> 45 minutes
-            </label>
-            <label class="time-box">
-                <input type="radio" name="cook_time" value="1 hour" class="hidden-input" required> 1 hour
-            </label>
-            <label class="time-box">
-                <input type="radio" name="cook_time" value="2 hours" class="hidden-input" required> 2 hours
-            </label>
-        </div>
-
-        <!-- Meal Type Selection -->
         <p>Select Meal Type:</p>
-        <div class="meal-options">
-            <label class="meal-option">
-                <input type="radio" name="meal_type" value="breakfast" class="hidden-input" required>
-                <img src="images/breakfast.jpg" alt="Breakfast">
-            </label>
-            <label class="meal-option">
-                <input type="radio" name="meal_type" value="lunch" class="hidden-input" required>
-                <img src="images/lunch.jpg" alt="Lunch">
-            </label>
-            <label class="meal-option">
-                <input type="radio" name="meal_type" value="dinner" class="hidden-input" required>
-                <img src="images/dinner.jpg" alt="Dinner">
-            </label>
-            <label class="meal-option">
-                <input type="radio" name="meal_type" value="dessert" class="hidden-input" required>
-                <img src="images/dessert.jpg" alt="Dessert">
-            </label>
-        </div>
-
+        <select name="meal_type" required>
+            <option value="breakfast">Breakfast</option>
+            <option value="lunch">Lunch</option>
+            <option value="dinner">Dinner</option>
+            <option value="dessert">Dessert</option>
+        </select>
+        <p>Select Cooking Time:</p>
+        <select name="cook_time" required>
+            <option value="15 minutes">15 minutes</option>
+            <option value="30 minutes">30 minutes</option>
+            <option value="45 minutes">45 minutes</option>
+            <option value="1 hour">1 hour</option>
+            <option value="2 hours">2 hours</option>
+        </select>
         <button type="submit" name="generate_recipe">Generate Recipe</button>
     </form>
 

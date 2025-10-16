@@ -8,13 +8,11 @@ if (!isset($_SESSION['username'])) {
     exit();
 }
 
-// Variables
 $recipes = [];
 $instructions = "";
-$selectedMeal = isset($_GET['meal']) ? $_GET['meal'] : "";
-$recipe = isset($_GET['recipe']) ? urldecode($_GET['recipe']) : "";
+$selectedMeal = isset($_GET['meal']) ? sanitizeInput($_GET['meal'], $conn) : "";
+$recipe = isset($_GET['recipe']) ? urldecode(sanitizeInput($_GET['recipe'], $conn)) : "";
 
-// Fetch the logged-in user's ID
 $query = "SELECT id FROM app_users WHERE username = ?";
 $stmt = $conn->prepare($query);
 $stmt->bind_param("s", $_SESSION['username']);
@@ -27,24 +25,23 @@ $success = $error = "";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['generate'])) {
-        $ingredients = sanitizeInput($_POST['ingredients'], $conn);
-        $diet = sanitizeInput($_POST['diet'], $conn);
-        $skill = sanitizeInput($_POST['skill'], $conn);
+        $ingredients = sanitizeInput($_POST['ingredients'] ?? '', $conn);
+        $diet = sanitizeInput($_POST['diet'] ?? '', $conn);
+        $skill = sanitizeInput($_POST['skill'] ?? '', $conn);
 
-        // Generate recipes using OpenAI
         $recipes = generateRecipes("$selectedMeal, $diet, $ingredients", $diet, $skill);
     } elseif (isset($_POST['select_recipe'])) {
-        $recipe = $_POST['recipe'];
+        $recipe = sanitizeInput($_POST['recipe'] ?? '', $conn);
         try {
             $instructions = generateRecipeInstructions($recipe);
         } catch (Exception $e) {
             $instructions = "Unable to fetch recipe instructions. Please try again.";
         }
     } elseif (isset($_POST['bookmark_recipe'])) {
-        $recipeToBookmark = sanitizeInput($_POST['recipe'], $conn);
-        $recipeName = sanitizeInput($_POST['recipe_name'], $conn) ?? 'Unnamed Recipe';
-        $recipeInstructions = sanitizeInput($_POST['instructions'], $conn) ?? 'No instructions provided';
-        $mealType = sanitizeInput($_POST['meal_type'], $conn) ?? null;
+        $recipeToBookmark = sanitizeInput($_POST['recipe'] ?? '', $conn);
+        $recipeName = sanitizeInput($_POST['recipe_name'] ?? 'Unnamed Recipe', $conn);
+        $recipeInstructions = sanitizeInput($_POST['instructions'] ?? 'No instructions provided', $conn);
+        $mealType = sanitizeInput($_POST['meal_type'] ?? '', $conn);
 
         // Bookmark the recipe
         $stmt = $conn->prepare("INSERT INTO bookmarks (user_id, recipe, recipe_name, instructions, meal_type) VALUES (?, ?, ?, ?, ?)");
@@ -71,6 +68,21 @@ if (!empty($recipe) && empty($instructions)) {
 <head>
     <title>Cooking Chaos - Recipe Details</title>
     <link rel="stylesheet" href="styles.css">
+    <style>
+        .recipe-card {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .recipe-card p {
+            margin: 0;
+        }
+        .recipe-card button {
+            margin-right: 10px;
+        }
+    </style>
 </head>
 <body>
 <div id="wrapper">
@@ -82,15 +94,15 @@ if (!empty($recipe) && empty($instructions)) {
         <h2><?php echo htmlspecialchars($recipe); ?></h2>
         <p><?php echo nl2br(htmlspecialchars($instructions)); ?></p>
         <?php if (!empty($success)): ?>
-            <p class="success"><?php echo $success; ?></p>
+            <p class="success"><?php echo htmlspecialchars($success); ?></p>
         <?php elseif (!empty($error)): ?>
-            <p class="error"><?php echo $error; ?></p>
+            <p class="error"><?php echo htmlspecialchars($error); ?></p>
         <?php endif; ?>
         <form method="POST" action="">
             <input type="hidden" name="recipe" value="<?php echo htmlspecialchars($recipe); ?>">
             <input type="hidden" name="recipe_name" value="<?php echo htmlspecialchars($recipe); ?>">
             <input type="hidden" name="instructions" value="<?php echo htmlspecialchars($instructions); ?>">
-            <input type="hidden" name="meal_type" value="<?php echo htmlspecialchars($selectedMeal ?? ''); ?>">
+            <input type="hidden" name="meal_type" value="<?php echo htmlspecialchars($selectedMeal); ?>">
             <button type="submit" name="bookmark_recipe">Bookmark Recipe</button>
         </form>
     <?php elseif (!empty($selectedMeal)): ?>

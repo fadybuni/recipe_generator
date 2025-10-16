@@ -15,7 +15,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($password !== $confirm_password) {
         $error = "Passwords do not match.";
     } else {
-        // Check if username already exists
         $checkQuery = $conn->prepare("SELECT * FROM app_users WHERE username = ?");
         $checkQuery->bind_param("s", $username);
         $checkQuery->execute();
@@ -24,7 +23,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($result->num_rows > 0) {
             $error = "Username is already taken.";
         } else {
-            // Hash the password and insert new user
             $hashed_password = password_hash($password, PASSWORD_BCRYPT);
             $insertQuery = $conn->prepare("INSERT INTO app_users (username, password) VALUES (?, ?)");
             $insertQuery->bind_param("ss", $username, $hashed_password);

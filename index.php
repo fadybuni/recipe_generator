@@ -9,8 +9,7 @@ if (isset($_SESSION['username'])) {
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $username = sanitizeInput($_POST['username'], $conn);
-    $password = md5($_POST['password']); // Replace with password_hash in production
-
+    $password = md5($_POST['password']); 
     $query = "SELECT * FROM app_users WHERE username = ? AND password = ?";
     $stmt = $conn->prepare($query);
     $stmt->bind_param("ss", $username, $password);
